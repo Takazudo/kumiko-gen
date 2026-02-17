@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "// ── Core ─────────────────────────────────────────": "",
-    "start": "pnpm run generate && docusaurus start --host mydoc.localhost --port 8811",
+    "start": "pnpm run generate && docusaurus start --host kumikogen.localhost --port 9147",
     "build": "pnpm run generate && docusaurus build",
     "serve": "docusaurus serve",
     "clear": "docusaurus clear",

@@ -3,25 +3,25 @@
  * Adds Noto Sans JP font, purple oklch color palette, improved typography,
  * sidebar styling, and responsive layout tweaks.
  *
- * Base color: oklch(70.2% 0.183 293.541) - vibrant purple
+ * Base color: oklch(35.9% 0.144 278.697) - deep indigo
  */
 
 /* Google Fonts - Noto Sans JP */
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap");
 
-/* Light mode color palette based on oklch(70.2% 0.183 293.541) */
+/* Light mode color palette based on oklch(35.9% 0.144 278.697) */
 :root {
   /* Font family */
   --ifm-font-family-base:
     "Noto Sans JP", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, sans-serif;
-  --ifm-color-primary: oklch(70.2% 0.183 293.541);
-  --ifm-color-primary-dark: oklch(64.7% 0.183 293.541);
-  --ifm-color-primary-darker: oklch(61.7% 0.183 293.541);
-  --ifm-color-primary-darkest: oklch(54.7% 0.183 293.541);
-  --ifm-color-primary-light: oklch(74.7% 0.183 293.541);
-  --ifm-color-primary-lighter: oklch(77.7% 0.183 293.541);
-  --ifm-color-primary-lightest: oklch(84.7% 0.183 293.541);
+  --ifm-color-primary: oklch(35.9% 0.144 278.697);
+  --ifm-color-primary-dark: oklch(30.4% 0.144 278.697);
+  --ifm-color-primary-darker: oklch(27.4% 0.144 278.697);
+  --ifm-color-primary-darkest: oklch(20.4% 0.144 278.697);
+  --ifm-color-primary-light: oklch(40.4% 0.144 278.697);
+  --ifm-color-primary-lighter: oklch(43.4% 0.144 278.697);
+  --ifm-color-primary-lightest: oklch(50.4% 0.144 278.697);
 
   /* Additional settings */
   --ifm-code-font-size: 95%;
@@ -35,13 +35,13 @@
 
 /* Dark mode color palette - brighter and less saturated for readability */
 [data-theme="dark"] {
-  --ifm-color-primary: oklch(75% 0.16 293.541);
-  --ifm-color-primary-dark: oklch(70% 0.16 293.541);
-  --ifm-color-primary-darker: oklch(67% 0.16 293.541);
-  --ifm-color-primary-darkest: oklch(60% 0.16 293.541);
-  --ifm-color-primary-light: oklch(80% 0.16 293.541);
-  --ifm-color-primary-lighter: oklch(83% 0.16 293.541);
-  --ifm-color-primary-lightest: oklch(90% 0.16 293.541);
+  --ifm-color-primary: oklch(65% 0.12 278.697);
+  --ifm-color-primary-dark: oklch(60% 0.12 278.697);
+  --ifm-color-primary-darker: oklch(57% 0.12 278.697);
+  --ifm-color-primary-darkest: oklch(50% 0.12 278.697);
+  --ifm-color-primary-light: oklch(70% 0.12 278.697);
+  --ifm-color-primary-lighter: oklch(73% 0.12 278.697);
+  --ifm-color-primary-lightest: oklch(80% 0.12 278.697);
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 
@@ -196,24 +196,24 @@ article.theme-doc-markdown {
 }
 
 .markdown th {
-  background-color: oklch(70.2% 0.183 293.541 / 0.1);
+  background-color: oklch(35.9% 0.144 278.697 / 0.1);
 }
 
 [data-theme="dark"] .markdown th {
-  background-color: oklch(75% 0.16 293.541 / 0.2);
+  background-color: oklch(65% 0.12 278.697 / 0.2);
 }
 
 /* Blockquote styling */
 .markdown blockquote {
-  border-left-color: oklch(70.2% 0.183 293.541);
-  background-color: oklch(70.2% 0.183 293.541 / 0.05);
+  border-left-color: oklch(35.9% 0.144 278.697);
+  background-color: oklch(35.9% 0.144 278.697 / 0.05);
   padding-top: 0.9em;
   padding-bottom: 0.9em;
 }
 
 [data-theme="dark"] .markdown blockquote {
-  border-left-color: oklch(75% 0.16 293.541);
-  background-color: oklch(75% 0.16 293.541 / 0.1);
+  border-left-color: oklch(65% 0.12 278.697);
+  background-color: oklch(65% 0.12 278.697 / 0.1);
 }
 
 /* Responsive breakpoints */
@@ -265,20 +265,20 @@ article.theme-doc-markdown {
 
 /* Search plugin styling */
 .navbar__search-input {
-  background-color: oklch(70.2% 0.183 293.541 / 0.1);
+  background-color: oklch(35.9% 0.144 278.697 / 0.1);
 }
 
 [data-theme="dark"] .navbar__search-input {
-  background-color: oklch(75% 0.16 293.541 / 0.15);
+  background-color: oklch(65% 0.12 278.697 / 0.15);
 }
 
 /* Navbar brand color */
 .navbar__brand {
-  color: oklch(70.2% 0.183 293.541);
+  color: oklch(35.9% 0.144 278.697);
 }
 
 [data-theme="dark"] .navbar__brand {
-  color: oklch(75% 0.16 293.541);
+  color: oklch(65% 0.12 278.697);
 }
 
 /* Logo styling - make it white */
@@ -289,11 +289,11 @@ article.theme-doc-markdown {
 
 /* Footer styling */
 .footer {
-  background-color: oklch(30% 0.183 293.541);
+  background-color: oklch(20% 0.144 278.697);
 }
 
 [data-theme="dark"] .footer {
-  background-color: oklch(20% 0.16 293.541);
+  background-color: oklch(15% 0.12 278.697);
 }
 
 /* ===== Document Meta Info (under h1) ===== */
