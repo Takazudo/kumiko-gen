@@ -36,7 +36,7 @@ export default function Home(): ReactNode {
                 <h2>Links</h2>
                 <ul className={styles.linksList}>
                   <li>
-                    <a href="https://example.com">Main Site</a>
+                    <a href="https://github.com/Takazudo/kumiko-gen" rel="noopener noreferrer">GitHub</a>
                   </li>
                 </ul>
               </section>
