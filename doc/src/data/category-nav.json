@@ -1,0 +1,24 @@
+{
+  "inbox": {
+    "pages": [
+      {
+        "docId": "inbox/sample-note",
+        "title": "Sample Note",
+        "position": 2
+      }
+    ],
+    "subcategories": []
+  },
+  "top-category-1": {
+    "pages": [],
+    "subcategories": []
+  },
+  "top-category-2": {
+    "pages": [],
+    "subcategories": []
+  },
+  "top-category-3": {
+    "pages": [],
+    "subcategories": []
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "name": "kumiko-gen-doc",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "// ── Core ─────────────────────────────────────────": "",
+    "start": "pnpm run generate && docusaurus start --host mydoc.localhost --port 8811",
+    "build": "pnpm run generate && docusaurus build",
+    "serve": "docusaurus serve",
+    "clear": "docusaurus clear",
+    "deploy": "docusaurus deploy",
+    "// ── Data & content tools ────────────────────────": "",
+    "generate": "pnpm run generate:doc-titles && pnpm run generate:category-nav",
+    "generate:doc-titles": "node scripts/generate-doc-titles.js",
+    "generate:category-nav": "node scripts/generate-category-nav.js",
+    "// ── Code quality ────────────────────────────────": "",
+    "typecheck": "tsc",
+    "// ── Docusaurus utilities ────────────────────────": "",
+    "docusaurus": "docusaurus",
+    "swizzle": "docusaurus swizzle",
+    "write-translations": "docusaurus write-translations",
+    "write-heading-ids": "docusaurus write-heading-ids"
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.9.2",
+    "@docusaurus/plugin-content-docs": "^3.9.2",
+    "@docusaurus/preset-classic": "3.9.2",
+    "@docusaurus/theme-common": "^3.9.2",
+    "@mdx-js/react": "^3.0.0",
+    "clsx": "^2.0.0",
+    "gray-matter": "^4.0.3",
+    "prism-react-renderer": "^2.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "3.9.2",
+    "@docusaurus/tsconfig": "3.9.2",
+    "@docusaurus/types": "3.9.2",
+    "typescript": "~5.6.2"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=20.0"
+  }
+}

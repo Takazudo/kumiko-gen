@@ -1,0 +1,15 @@
+{
+  "name": "kumiko-gen",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "// ── Doc site ────────────────────────────────────": "",
+    "doc:start": "cd doc && pnpm run start",
+    "doc:build": "cd doc && pnpm run build",
+    "doc:serve": "cd doc && pnpm run serve",
+    "doc:generate": "cd doc && pnpm run generate",
+    "doc:typecheck": "cd doc && pnpm run typecheck",
+    "// ── Internal & utilities ────────────────────────": "",
+    "_doc:install": "cd doc && pnpm install"
+  }
+}
