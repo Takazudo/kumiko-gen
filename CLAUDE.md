@@ -32,7 +32,7 @@ pnpm --filter @takazudo/kumiko-gen build     # Build kumiko-gen
 pnpm --filter @takazudo/kumiko-gen test      # Test kumiko-gen
 pnpm --filter @takazudo/svg-to-png build     # Build svg-to-png
 pnpm --filter @takazudo/svg-to-png test      # Test svg-to-png
-pnpm --filter kumiko-gen-viewer dev          # Viewer dev server
+pnpm --filter kumiko-gen-viewer dev          # Viewer dev server (kumikogen.localhost:1982)
 pnpm --filter kumiko-gen-viewer build        # Build viewer
 
 # Doc site
