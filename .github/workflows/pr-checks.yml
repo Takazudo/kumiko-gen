@@ -1,7 +1,7 @@
 # Pull request quality checks and preview deployment.
 #
 # Triggered on PRs targeting `main`. The pipeline:
-#   1. Builds the Docusaurus doc site
+#   1. Builds the kumiko-gen packages, viewer SPA, and Docusaurus doc site
 #   2. Deploys a preview to Netlify and posts the URL as a PR comment
 #
 # Concurrency: cancel in-progress runs for the same PR to save resources.
@@ -23,40 +23,10 @@ permissions:
 
 jobs:
   # ---------------------------------------------------------------------------
-  # Job 1: Build the doc site
+  # Job 1: Build packages, viewer, and doc site (reusable workflow)
   # ---------------------------------------------------------------------------
   build:
-    name: Build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-          cache-dependency-path: doc/pnpm-lock.yaml
-
-      - name: Install dependencies
-        run: cd doc && pnpm install --frozen-lockfile
-
-      - name: Build doc
-        run: cd doc && pnpm run build
-
-      - name: Upload doc artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: doc-out
-          path: doc/build/
-          retention-days: 1
+    uses: ./.github/workflows/build.yml
 
   # ---------------------------------------------------------------------------
   # Job 2: Deploy preview and comment on PR
@@ -67,6 +37,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Download viewer artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: viewer-out
+          path: viewer-out/
+
       - name: Download doc artifact
         uses: actions/download-artifact@v4
         with:
@@ -75,6 +51,8 @@ jobs:
 
       - name: Assemble deploy directory
         run: |
+          mkdir -p deploy/pj/kumiko-gen
+          cp -r viewer-out/* deploy/pj/kumiko-gen/
           mkdir -p deploy/pj/kumiko-gen/doc
           cp -r doc-out/* deploy/pj/kumiko-gen/doc/
 
@@ -115,7 +93,8 @@ jobs:
               '',
               `| | URL |`,
               `|---|---|`,
-              `| Preview | ${deployUrl} |`,
+              `| Viewer | ${deployUrl}/pj/kumiko-gen/ |`,
+              `| Doc | ${deployUrl}/pj/kumiko-gen/doc/ |`,
               '',
               `Built from commit: \`${context.sha.substring(0, 7)}\``,
             ].join('\n');

@@ -1,8 +1,8 @@
-# Production deployment workflow for doc site.
+# Production deployment workflow for viewer and doc site.
 #
 # Triggered on every push to `main`. The pipeline:
-#   1. Builds the Docusaurus doc site
-#   2. Deploys to Netlify (production) at /pj/kumiko-gen/doc/
+#   1. Builds the kumiko-gen packages, viewer SPA, and Docusaurus doc site
+#   2. Combines outputs and deploys to Netlify (production)
 #
 # Concurrency: only one production deploy runs at a time.
 # We do NOT cancel in-progress runs -- the earlier deploy should finish.
@@ -20,43 +20,13 @@ concurrency:
 
 jobs:
   # ---------------------------------------------------------------------------
-  # Job 1: Build the doc site
+  # Job 1: Build packages, viewer, and doc site (reusable workflow)
   # ---------------------------------------------------------------------------
   build:
-    name: Build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-          cache-dependency-path: doc/pnpm-lock.yaml
-
-      - name: Install dependencies
-        run: cd doc && pnpm install --frozen-lockfile
-
-      - name: Build doc
-        run: cd doc && pnpm run build
-
-      - name: Upload doc artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: doc-out
-          path: doc/build/
-          retention-days: 1
+    uses: ./.github/workflows/build.yml
 
   # ---------------------------------------------------------------------------
-  # Job 2: Deploy to Netlify (production)
+  # Job 2: Combine outputs and deploy to Netlify (production)
   # ---------------------------------------------------------------------------
   deploy:
     name: Deploy to Netlify
@@ -64,6 +34,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Download viewer artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: viewer-out
+          path: viewer-out/
+
       - name: Download doc artifact
         uses: actions/download-artifact@v4
         with:
@@ -72,6 +48,8 @@ jobs:
 
       - name: Assemble deploy directory
         run: |
+          mkdir -p deploy/pj/kumiko-gen
+          cp -r viewer-out/* deploy/pj/kumiko-gen/
           mkdir -p deploy/pj/kumiko-gen/doc
           cp -r doc-out/* deploy/pj/kumiko-gen/doc/
 

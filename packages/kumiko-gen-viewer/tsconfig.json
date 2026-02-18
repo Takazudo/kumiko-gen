@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "paths": {
+      "kumiko-gen": ["../kumiko-gen/src/index.ts"],
+      "kumiko-gen/*": ["../kumiko-gen/src/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}

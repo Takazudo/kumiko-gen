@@ -1,0 +1,61 @@
+---
+sidebar_position: 5
+---
+
+# API Reference
+
+## generateKumiko
+
+Generate a kumiko SVG string from a slug.
+
+```typescript
+function generateKumiko(slug: string, options?: KumikoOptions): string
+```
+
+### KumikoOptions
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `size` | `number` | `800` | SVG size in pixels |
+| `divisions` | `number` | (random: 6, 8, or 10) | Grid divisions |
+| `zoom` | `number` | `1` | Zoom level |
+| `fg` | `string` | (random from palette) | Foreground (line) color |
+| `bg` | `string` | `'#2d2d2d'` | Background color |
+| `strokeWidth` | `number` | (auto, scaled by density) | Line stroke width |
+| `finalize` | `boolean` | `false` | Remove elements outside viewBox |
+| `layers` | `LayerOverride[]` | `[]` | Per-layer customization |
+| `overflow` | `number` | `1` | Canvas overflow factor |
+
+## generateKumikoDetailed
+
+Generate a kumiko SVG with detailed layer information.
+
+```typescript
+function generateKumikoDetailed(slug: string, options?: KumikoOptions): KumikoResult
+```
+
+Returns a `KumikoResult` with `svg` string and `layers` array containing pattern names, colors, and stroke widths.
+
+## finalizeSvg
+
+Optimize an SVG by removing elements outside the viewBox.
+
+```typescript
+function finalizeSvg(svg: string): string
+```
+
+## hashString
+
+Generate a deterministic hash from a string.
+
+```typescript
+function hashString(str: string): number
+```
+
+## createRandom
+
+Create a seeded random number generator.
+
+```typescript
+function createRandom(seed: number): () => number
+```
