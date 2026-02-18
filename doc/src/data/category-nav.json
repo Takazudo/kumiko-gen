@@ -1,4 +1,8 @@
 {
+  "changelog": {
+    "pages": [],
+    "subcategories": []
+  },
   "inbox": {
     "pages": [
       {
@@ -9,16 +13,49 @@
     ],
     "subcategories": []
   },
-  "top-category-1": {
-    "pages": [],
+  "kumiko-gen": {
+    "pages": [
+      {
+        "docId": "kumiko-gen/installation",
+        "title": "Installation",
+        "position": 2
+      },
+      {
+        "docId": "kumiko-gen/usage",
+        "title": "Usage",
+        "position": 3
+      },
+      {
+        "docId": "kumiko-gen/patterns",
+        "title": "Patterns",
+        "position": 4
+      },
+      {
+        "docId": "kumiko-gen/api",
+        "title": "API Reference",
+        "position": 5
+      }
+    ],
     "subcategories": []
   },
-  "top-category-2": {
-    "pages": [],
+  "kumiko-gen-viewer": {
+    "pages": [
+      {
+        "docId": "kumiko-gen-viewer/usage",
+        "title": "Usage",
+        "position": 2
+      }
+    ],
     "subcategories": []
   },
-  "top-category-3": {
-    "pages": [],
+  "svg-to-png": {
+    "pages": [
+      {
+        "docId": "svg-to-png/usage",
+        "title": "Usage",
+        "position": 2
+      }
+    ],
     "subcategories": []
   }
 }

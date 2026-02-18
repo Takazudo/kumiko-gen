@@ -1,7 +1,14 @@
 {
+  "changelog/index": "Changelog",
   "inbox/index": "INBOX",
   "inbox/sample-note": "Sample Note",
-  "top-category-1/index": "TopCategory1",
-  "top-category-2/index": "TopCategory2",
-  "top-category-3/index": "TopCategory3"
+  "kumiko-gen-viewer/index": "kumiko-gen-viewer",
+  "kumiko-gen-viewer/usage": "Usage",
+  "kumiko-gen/api": "API Reference",
+  "kumiko-gen/index": "kumiko-gen",
+  "kumiko-gen/installation": "Installation",
+  "kumiko-gen/patterns": "Patterns",
+  "kumiko-gen/usage": "Usage",
+  "svg-to-png/index": "svg-to-png",
+  "svg-to-png/usage": "Usage"
 }
