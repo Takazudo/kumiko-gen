@@ -66,27 +66,33 @@ const config: Config = {
       items: [
         {
           type: 'docSidebar',
+          sidebarId: 'kumikoGenSidebar',
+          position: 'left',
+          label: 'kumiko-gen',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'viewerSidebar',
+          position: 'left',
+          label: 'kumiko-gen-viewer',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'svgToPngSidebar',
+          position: 'left',
+          label: 'svg-to-png',
+        },
+        {
+          type: 'docSidebar',
+          sidebarId: 'changelogSidebar',
+          position: 'left',
+          label: 'Changelog',
+        },
+        {
+          type: 'docSidebar',
           sidebarId: 'inboxSidebar',
           position: 'left',
           label: 'INBOX',
-        },
-        {
-          type: 'docSidebar',
-          sidebarId: 'topCategory1Sidebar',
-          position: 'left',
-          label: 'TopCategory1',
-        },
-        {
-          type: 'docSidebar',
-          sidebarId: 'topCategory2Sidebar',
-          position: 'left',
-          label: 'TopCategory2',
-        },
-        {
-          type: 'docSidebar',
-          sidebarId: 'topCategory3Sidebar',
-          position: 'left',
-          label: 'TopCategory3',
         },
       ],
     },

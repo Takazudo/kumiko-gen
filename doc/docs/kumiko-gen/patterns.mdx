@@ -1,0 +1,30 @@
+---
+sidebar_position: 4
+---
+
+# Patterns
+
+kumiko-gen includes 9 traditional Japanese geometric patterns. Each slug generates a unique combination of 2-4 overlaid patterns.
+
+## Available Patterns
+
+| Pattern | Japanese | Description |
+|---------|----------|-------------|
+| asanoha | 麻の葉 | Hemp leaf star pattern |
+| mitsukude | 三つ組手 | Triple interlocking pattern |
+| goma | 胡麻 | Sesame seed pattern |
+| shippo | 七宝 | Seven treasures interlocking circles |
+| yae-asanoha | 八重麻の葉 | Double hemp leaf pattern |
+| kikko | 亀甲 | Tortoiseshell hexagonal pattern |
+| sakura | 桜 | Cherry blossom pattern |
+| bishamon | 毘沙門 | Bishamon tortoiseshell pattern |
+| izutsu | 井筒 | Well frame pattern |
+
+## Pattern Selection
+
+Patterns are selected deterministically based on the input slug. The slug is hashed to produce a seed, which determines:
+
+- Number of layers (2-4)
+- Which patterns are used in each layer
+- Grid divisions (triangulation density)
+- Color assignment from the palette

@@ -1,0 +1,44 @@
+---
+sidebar_position: 2
+---
+
+# Usage
+
+## CLI
+
+```bash
+svg-to-png <input.svg> [options]
+```
+
+### Options
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--out <path>` | `<input>.png` | Output file path |
+| `--width <n>` | `1200` | Output width in pixels |
+| `--height <n>` | `630` | Output height in pixels |
+
+### Examples
+
+```bash
+# Convert SVG to PNG (default 1200x630)
+svg-to-png pattern.svg
+
+# Custom output path
+svg-to-png pattern.svg --out og-image.png
+
+# Custom dimensions
+svg-to-png pattern.svg --width 800 --height 400
+```
+
+## Programmatic API
+
+```typescript
+import { convertSvgToPng } from '@takazudo/svg-to-png';
+
+const svgBuffer = Buffer.from('<svg>...</svg>');
+const pngBuffer = await convertSvgToPng(svgBuffer, {
+  width: 1200,
+  height: 630,
+});
+```

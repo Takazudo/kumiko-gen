@@ -1,0 +1,31 @@
+---
+sidebar_position: 1
+---
+
+import CategoryNav from '@site/src/components/CategoryNav';
+
+# kumiko-gen
+
+kumiko-gen is a CLI tool and Node.js library for generating deterministic Japanese kumiko geometric pattern SVGs from text seeds.
+
+## Features
+
+- Generate unique kumiko patterns from any text string (slug)
+- 9 traditional Japanese patterns: asanoha, mitsukude, goma, shippo, yae-asanoha, kikko, sakura, bishamon, izutsu
+- Deterministic output: same slug always produces the same pattern
+- Multi-layer composition with 2-4 overlaid patterns per slug
+- Customizable colors, size, and zoom level
+- SVG optimization with `finalizeSvg()` to remove elements outside viewBox
+- CLI and programmatic API
+
+## Quick Start
+
+```bash
+# Install
+npm install -g @takazudo/kumiko-gen
+
+# Generate a pattern
+kumiko-gen hello-world --out hello.svg
+```
+
+<CategoryNav category="kumiko-gen" />
