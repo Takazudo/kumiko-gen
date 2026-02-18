@@ -9,12 +9,20 @@
     ]
   },
   "scripts": {
+    "// ── Packages ────────────────────────────────────": "",
+    "build": "pnpm --filter @takazudo/kumiko-gen build && pnpm --filter @takazudo/svg-to-png build",
+    "test": "pnpm --filter @takazudo/kumiko-gen test && pnpm --filter @takazudo/svg-to-png test",
+    "// ── Viewer ──────────────────────────────────────": "",
+    "viewer:dev": "pnpm --filter kumiko-gen-viewer dev",
+    "viewer:build": "pnpm --filter kumiko-gen-viewer build",
     "// ── Doc site ────────────────────────────────────": "",
     "doc:start": "cd doc && pnpm run start",
     "doc:build": "cd doc && pnpm run build",
     "doc:serve": "cd doc && pnpm run serve",
     "doc:generate": "cd doc && pnpm run generate",
     "doc:typecheck": "cd doc && pnpm run typecheck",
+    "// ── Validation ──────────────────────────────────": "",
+    "b4push": "./scripts/run-b4push.sh",
     "// ── Internal & utilities ────────────────────────": "",
     "_doc:install": "cd doc && pnpm install"
   }
