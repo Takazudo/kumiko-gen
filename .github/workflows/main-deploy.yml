@@ -1,0 +1,89 @@
+# Production deployment workflow for doc site.
+#
+# Triggered on every push to `main`. The pipeline:
+#   1. Builds the Docusaurus doc site
+#   2. Deploys to Netlify (production) at /pj/kumiko-gen/doc/
+#
+# Concurrency: only one production deploy runs at a time.
+# We do NOT cancel in-progress runs -- the earlier deploy should finish.
+
+name: Production Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Job 1: Build the doc site
+  # ---------------------------------------------------------------------------
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: doc/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: cd doc && pnpm install --frozen-lockfile
+
+      - name: Build doc
+        run: cd doc && pnpm run build
+
+      - name: Upload doc artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: doc-out
+          path: doc/build/
+          retention-days: 1
+
+  # ---------------------------------------------------------------------------
+  # Job 2: Deploy to Netlify (production)
+  # ---------------------------------------------------------------------------
+  deploy:
+    name: Deploy to Netlify
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download doc artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: doc-out
+          path: doc-out/
+
+      - name: Assemble deploy directory
+        run: |
+          mkdir -p deploy/pj/kumiko-gen/doc
+          cp -r doc-out/* deploy/pj/kumiko-gen/doc/
+
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+
+      - name: Deploy to Netlify (production)
+        run: |
+          netlify deploy \
+            --prod \
+            --dir=deploy \
+            --message "Production deploy: ${GITHUB_SHA}"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

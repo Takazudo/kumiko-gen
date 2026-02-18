@@ -1,0 +1,150 @@
+# Pull request quality checks and preview deployment.
+#
+# Triggered on PRs targeting `main`. The pipeline:
+#   1. Builds the Docusaurus doc site
+#   2. Deploys a preview to Netlify and posts the URL as a PR comment
+#
+# Concurrency: cancel in-progress runs for the same PR to save resources.
+
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: pr-checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Job 1: Build the doc site
+  # ---------------------------------------------------------------------------
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: doc/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: cd doc && pnpm install --frozen-lockfile
+
+      - name: Build doc
+        run: cd doc && pnpm run build
+
+      - name: Upload doc artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: doc-out
+          path: doc/build/
+          retention-days: 1
+
+  # ---------------------------------------------------------------------------
+  # Job 2: Deploy preview and comment on PR
+  # ---------------------------------------------------------------------------
+  preview:
+    name: Preview Deploy
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download doc artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: doc-out
+          path: doc-out/
+
+      - name: Assemble deploy directory
+        run: |
+          mkdir -p deploy/pj/kumiko-gen/doc
+          cp -r doc-out/* deploy/pj/kumiko-gen/doc/
+
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+
+      - name: Deploy preview to Netlify
+        id: netlify-deploy
+        run: |
+          # Deploy as draft (not production) and capture JSON output
+          DEPLOY_OUTPUT=$(netlify deploy \
+            --dir=deploy \
+            --json \
+            --message "Preview: PR #${{ github.event.pull_request.number }}")
+
+          # Extract the deploy URL from JSON output
+          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | jq -r '.deploy_url')
+
+          echo "deploy_url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
+          echo "Preview URL: $DEPLOY_URL"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: Comment preview URL on PR
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const deployUrl = '${{ steps.netlify-deploy.outputs.deploy_url }}';
+            const prNumber = context.issue.number;
+            const marker = '<!-- netlify-preview-comment -->';
+
+            const body = [
+              marker,
+              `## Netlify Preview`,
+              '',
+              `Preview deployment is ready.`,
+              '',
+              `| | URL |`,
+              `|---|---|`,
+              `| Preview | ${deployUrl} |`,
+              '',
+              `Built from commit: \`${context.sha.substring(0, 7)}\``,
+            ].join('\n');
+
+            // Look for an existing comment from this workflow
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+            });
+
+            const existing = comments.find(c => c.body.includes(marker));
+
+            if (existing) {
+              // Update the existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+              console.log(`Updated existing preview comment (id: ${existing.id})`);
+            } else {
+              // Create a new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body,
+              });
+              console.log('Created new preview comment');
+            }
