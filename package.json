@@ -2,6 +2,12 @@
   "name": "kumiko-gen",
   "version": "0.0.0",
   "private": true,
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp"
+    ]
+  },
   "scripts": {
     "// ── Doc site ────────────────────────────────────": "",
     "doc:start": "cd doc && pnpm run start",
