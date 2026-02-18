@@ -25,5 +25,14 @@
     "b4push": "./scripts/run-b4push.sh",
     "// ── Internal & utilities ────────────────────────": "",
     "_doc:install": "cd doc && pnpm install"
+  },
+  "pnpm": {
+    "overrides": {
+      "chokidar": "^5.0.0",
+      "undici-types": "^7.22.0"
+    },
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }
