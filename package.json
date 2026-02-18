@@ -11,5 +11,14 @@
     "doc:typecheck": "cd doc && pnpm run typecheck",
     "// ── Internal & utilities ────────────────────────": "",
     "_doc:install": "cd doc && pnpm install"
+  },
+  "pnpm": {
+    "overrides": {
+      "chokidar": "^5.0.0",
+      "undici-types": "^7.22.0"
+    },
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }
