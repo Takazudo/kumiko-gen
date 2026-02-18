@@ -47,7 +47,7 @@ jobs:
         run: pnpm --filter kumiko-gen-viewer build
 
       - name: Install doc dependencies
-        run: cd doc && pnpm install --frozen-lockfile
+        run: cd doc && pnpm install --frozen-lockfile --ignore-workspace
 
       - name: Build doc site
         run: cd doc && pnpm run build
