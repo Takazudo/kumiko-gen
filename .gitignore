@@ -25,5 +25,8 @@ npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
 
+# Worktrees
+worktrees/
+
 # Misc
 __inbox/
