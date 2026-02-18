@@ -206,12 +206,12 @@ export function App() {
       {/* Logo link */}
       <a
         className="site-link"
-        href="https://github.com/Takazudo/kumiko-gen"
+        href="https://takazudomodular.com/"
         target="_blank"
         rel="noopener noreferrer"
       >
-        <img src={`${import.meta.env.BASE_URL}takazudo.svg`} alt="kumiko-gen" className="site-logo" />
-        <span>kumiko-gen</span>
+        <img src={`${import.meta.env.BASE_URL}takazudo.svg`} alt="Takazudo Modular" className="site-logo" />
+        <span>Takazudo Modular</span>
       </a>
 
       {/* Controls */}
