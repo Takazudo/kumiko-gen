@@ -16,18 +16,20 @@ kumiko-gen <slug> [options]
 |--------|---------|-------------|
 | `--size <n>` | `800` | SVG size in pixels (square) |
 | `--zoom <n>` | `1` | Zoom level |
-| `--fg <color>` | `#1c1917` | Foreground (line) color |
-| `--bg <color>` | `#d6d3d1` | Background color |
+| `--fg <color>` | (random) | Foreground (line) color |
+| `--bg <color>` | `#2d2d2d` | Background color |
 | `--finalize` | `false` | Remove SVG elements outside viewBox |
-| `--out <path>` | stdout | Output file path |
+| `--stroke-width <n>` | (auto) | Line stroke width |
+| `--divisions <n>` | (auto) | Grid divisions (e.g. 6, 8, 10) |
+| `--out <path>` | `<slug>.svg` | Output file path |
 
 ### Examples
 
 ```bash
-# Basic usage - outputs SVG to stdout
+# Basic usage - writes my-pattern.svg in current directory
 kumiko-gen my-pattern
 
-# Save to file with custom size
+# Save to specific file with custom size
 kumiko-gen my-pattern --size 1200 --out pattern.svg
 
 # Custom colors with optimization
@@ -43,8 +45,8 @@ import { generateKumiko, generateKumikoDetailed, finalizeSvg } from '@takazudo/k
 const svg = generateKumiko('my-slug', {
   size: 800,
   zoom: 1,
-  fgColor: '#1c1917',
-  bgColor: '#d6d3d1',
+  fg: '#1c1917',
+  bg: '#d6d3d1',
 });
 
 // Detailed usage (returns layer info for customization)

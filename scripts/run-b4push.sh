@@ -17,10 +17,10 @@ echo "=== [5/7] Build kumiko-gen-viewer ==="
 pnpm --filter kumiko-gen-viewer build
 
 echo "=== [6/7] Generate doc data ==="
-cd doc && pnpm run generate && cd ..
+(cd doc && pnpm run generate)
 
 echo "=== [7/7] Build doc site ==="
-cd doc && pnpm run build && cd ..
+(cd doc && pnpm run build)
 
 echo ""
 echo "All checks passed!"

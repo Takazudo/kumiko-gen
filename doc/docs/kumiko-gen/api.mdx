@@ -17,10 +17,14 @@ function generateKumiko(slug: string, options?: KumikoOptions): string
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `size` | `number` | `800` | SVG size in pixels |
+| `divisions` | `number` | (random: 6, 8, or 10) | Grid divisions |
 | `zoom` | `number` | `1` | Zoom level |
-| `fgColor` | `string` | `'#1c1917'` | Foreground color |
-| `bgColor` | `string` | `'#d6d3d1'` | Background color |
-| `layerOverrides` | `LayerOverride[]` | `[]` | Per-layer customization |
+| `fg` | `string` | (random from palette) | Foreground (line) color |
+| `bg` | `string` | `'#2d2d2d'` | Background color |
+| `strokeWidth` | `number` | (auto, scaled by density) | Line stroke width |
+| `finalize` | `boolean` | `false` | Remove elements outside viewBox |
+| `layers` | `LayerOverride[]` | `[]` | Per-layer customization |
+| `overflow` | `number` | `1` | Canvas overflow factor |
 
 ## generateKumikoDetailed
 

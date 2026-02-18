@@ -25,6 +25,10 @@ export async function convertSvgToPng(
   const width = options.width ?? DEFAULT_WIDTH;
   const height = options.height ?? DEFAULT_HEIGHT;
 
+  if (height > width) {
+    throw new Error(`Height (${height}) must not exceed width (${width}). The SVG is rendered as a square at the target width, then center-cropped to the target height.`);
+  }
+
   // Center-crop: remove equal amounts from top and bottom
   const cropTop = Math.round((width - height) / 2);
 

@@ -47,6 +47,15 @@ jobs:
       - name: Build kumiko-gen package
         run: pnpm --filter @takazudo/kumiko-gen build
 
+      - name: Test kumiko-gen package
+        run: pnpm --filter @takazudo/kumiko-gen test
+
+      - name: Build svg-to-png package
+        run: pnpm --filter @takazudo/svg-to-png build
+
+      - name: Test svg-to-png package
+        run: pnpm --filter @takazudo/svg-to-png test
+
       - name: Build kumiko-gen-viewer
         run: pnpm --filter kumiko-gen-viewer build
 
