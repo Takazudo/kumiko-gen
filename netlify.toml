@@ -1,11 +1,11 @@
 # Build is handled by GitHub Actions, not Netlify.
 # This config overrides the Netlify UI settings.
 [build]
-  command = "echo 'Build handled by CI'"
+  command = "echo 'Build disabled - deploying from GitHub Actions'"
   publish = "deploy"
 
-# Redirect root to the doc site
+# Redirect root to the viewer app
 [[redirects]]
   from = "/"
-  to = "/pj/kumiko-gen/doc/"
+  to = "/pj/kumiko-gen/"
   status = 302
