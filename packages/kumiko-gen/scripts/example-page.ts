@@ -1,7 +1,7 @@
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { generateKumiko } from './generator.js';
+import { generateKumiko } from '../src/generator.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

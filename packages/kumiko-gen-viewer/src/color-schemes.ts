@@ -4,9 +4,11 @@
  * palette[1-7] are used as line/stroke colors for layers.
  */
 
+export type Palette = [string, string, string, string, string, string, string, string];
+
 export interface ColorScheme {
   name: string;
-  palette: string[];
+  palette: Palette;
 }
 
 export const COLOR_SCHEMES: ColorScheme[] = [

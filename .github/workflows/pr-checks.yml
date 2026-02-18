@@ -23,64 +23,10 @@ permissions:
 
 jobs:
   # ---------------------------------------------------------------------------
-  # Job 1: Build packages, viewer, and doc site
+  # Job 1: Build packages, viewer, and doc site (reusable workflow)
   # ---------------------------------------------------------------------------
   build:
-    name: Build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-
-      - name: Install workspace dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build kumiko-gen package
-        run: pnpm --filter @takazudo/kumiko-gen build
-
-      - name: Test kumiko-gen package
-        run: pnpm --filter @takazudo/kumiko-gen test
-
-      - name: Build svg-to-png package
-        run: pnpm --filter @takazudo/svg-to-png build
-
-      - name: Test svg-to-png package
-        run: pnpm --filter @takazudo/svg-to-png test
-
-      - name: Build kumiko-gen-viewer
-        run: pnpm --filter kumiko-gen-viewer build
-
-      - name: Install doc dependencies
-        run: cd doc && pnpm install --frozen-lockfile
-
-      - name: Build doc site
-        run: cd doc && pnpm run build
-
-      - name: Upload viewer artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: viewer-out
-          path: packages/kumiko-gen-viewer/dist/
-          retention-days: 1
-
-      - name: Upload doc artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: doc-out
-          path: doc/build/
-          retention-days: 1
+    uses: ./.github/workflows/build.yml
 
   # ---------------------------------------------------------------------------
   # Job 2: Deploy preview and comment on PR

@@ -162,25 +162,23 @@ export function App() {
   const randomize = useCallback(() => {
     const randomSchemeIndex = Math.floor(Math.random() * COLOR_SCHEMES.length);
     const newPalette = COLOR_SCHEMES[randomSchemeIndex].palette;
+    const lineColors = newPalette.slice(1);
     const p: GlobalParams = {
       slug: randomSlug(),
       divisions: DIVISIONS_OPTIONS[Math.floor(Math.random() * DIVISIONS_OPTIONS.length)],
       zoom: Math.round((1 + Math.random() * 9) * 10) / 10,
       bg: newPalette[0],
     };
+    // Pre-assign palette colors for up to 4 layers (max layer count).
+    // The generator ignores extra overrides beyond the actual layer count.
+    const newOverrides = lineColors.map((color) => ({ fg: color }));
     setColorSchemeIndex(randomSchemeIndex);
     setParams(p);
-    // Generate first to get layer info, then map colors from the new scheme
-    const result = generate(p, []);
-    const newOverrides = result.layers.map((layer, i) => {
-      return { fg: mapLayerColor(layer.fg, newPalette, i) };
-    });
-    setLayerOverrides(newOverrides);
+    // Single generation with color overrides already applied
+    const result = generate(p, newOverrides);
+    setLayerOverrides(newOverrides.slice(0, result.layers.length));
     setLayerInfos(result.layers);
-    // Re-generate with the color overrides applied
-    const finalResult = generate(p, newOverrides);
-    setLayerInfos(finalResult.layers);
-    crossfade(finalResult.svg);
+    crossfade(result.svg);
   }, [crossfade]);
 
   const download = useCallback(() => {
@@ -202,7 +200,7 @@ export function App() {
       {/* SVG background with two layers for crossfade */}
       <div className="svg-layer">
         <img ref={imgARef} alt="" />
-        <img ref={imgBRef} alt="" style={{ position: 'absolute' }} />
+        <img ref={imgBRef} alt="" className="svg-layer-back" />
       </div>
 
       {/* Logo link */}
@@ -221,9 +219,10 @@ export function App() {
         <h1>kumiko-gen</h1>
 
         <div className="control-group">
-          <label>Slug / Seed</label>
+          <label htmlFor="slug-input">Slug / Seed</label>
           <div className="slug-row">
             <input
+              id="slug-input"
               type="text"
               value={params.slug}
               onChange={(e) => updateGlobal({ slug: e.target.value })}
@@ -241,6 +240,7 @@ export function App() {
               <button
                 key={d}
                 className={params.divisions === d ? 'active' : ''}
+                aria-pressed={params.divisions === d}
                 onClick={() => updateGlobal({ divisions: d })}
               >
                 {d}
@@ -250,9 +250,10 @@ export function App() {
         </div>
 
         <div className="control-group">
-          <label>Zoom</label>
+          <label htmlFor="zoom-input">Zoom</label>
           <div className="range-row">
             <input
+              id="zoom-input"
               type="range"
               min="1"
               max="10"
@@ -265,9 +266,10 @@ export function App() {
         </div>
 
         <div className="control-group">
-          <label>Background</label>
+          <label htmlFor="bg-color-input">Background</label>
           <div className="color-input-row">
             <input
+              id="bg-color-input"
               type="color"
               value={params.bg}
               onChange={(e) => updateGlobal({ bg: e.target.value })}
@@ -278,8 +280,9 @@ export function App() {
 
         {/* Color scheme selector */}
         <div className="control-group">
-          <label>Color Scheme</label>
+          <label htmlFor="scheme-select">Color Scheme</label>
           <select
+            id="scheme-select"
             className="scheme-select"
             value={colorSchemeIndex}
             onChange={(e) => handleColorSchemeChange(Number(e.target.value))}
@@ -290,13 +293,12 @@ export function App() {
               </option>
             ))}
           </select>
-          <div className="scheme-preview">
+          <div className="scheme-preview" aria-hidden="true">
             {currentPalette.map((color, i) => (
               <span
                 key={i}
                 className="scheme-dot"
                 style={{ background: color }}
-                title={color}
               />
             ))}
           </div>
@@ -330,7 +332,7 @@ export function App() {
                           className={`color-swatch small ${currentFg === color ? 'active' : ''}`}
                           style={{ background: color }}
                           onClick={() => updateLayerOverride(i, { fg: color })}
-                          title={color}
+                          aria-label={`Set layer color to ${color}`}
                         />
                       ))}
                     </div>

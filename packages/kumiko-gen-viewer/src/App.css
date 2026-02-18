@@ -81,7 +81,12 @@ body {
   width: auto;
   height: auto;
   object-fit: cover;
+  opacity: 0;
   transition: opacity 0.4s ease;
+}
+
+.svg-layer .svg-layer-back {
+  position: absolute;
 }
 
 .svg-layer img.fading-out {
@@ -155,7 +160,6 @@ body {
   padding: 6px 10px;
   color: #e0e0e0;
   font-size: 13px;
-  outline: none;
   transition: border-color 0.2s;
 }
 
@@ -270,7 +274,6 @@ body {
   padding: 6px 28px 6px 10px;
   color: #e0e0e0;
   font-size: 13px;
-  outline: none;
   cursor: pointer;
   transition: border-color 0.2s;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23aaa'/%3E%3C/svg%3E");
