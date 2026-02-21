@@ -3,6 +3,7 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { generateKumiko } from './generator.js';
 import type { KumikoOptions } from './generator.js';
+import { getColorSchemeNames } from './color-schemes.js';
 
 function fail(msg: string): never {
   console.error(msg);
@@ -24,7 +25,7 @@ function requireFloat(flag: string, value: string | undefined): number {
 }
 
 // Flags that consume the next arg as their value
-const FLAGS_WITH_VALUE = new Set(['--size', '--fg', '--bg', '--zoom', '--stroke-width', '--divisions', '--out', '--out-dir']);
+const FLAGS_WITH_VALUE = new Set(['--size', '--fg', '--bg', '--zoom', '--stroke-width', '--divisions', '--out', '--out-dir', '--color-scheme']);
 
 function parseArgs(args: string[]): { slug: string; options: KumikoOptions; outPath?: string; outDir?: string } {
   const options: KumikoOptions = {};
@@ -69,6 +70,13 @@ function parseArgs(args: string[]): { slug: string; options: KumikoOptions; outP
         outDir = args[++i];
         if (!outDir) fail('--out-dir requires a directory path');
         break;
+      case '--color-scheme':
+        options.colorScheme = args[++i];
+        if (!options.colorScheme) fail('--color-scheme requires a name or "random"');
+        break;
+      case '--list-color-schemes':
+        console.log(getColorSchemeNames().join('\n'));
+        process.exit(0);
       default:
         positional.push(args[i]);
         break;
@@ -77,7 +85,7 @@ function parseArgs(args: string[]): { slug: string; options: KumikoOptions; outP
 
   const slug = positional[0];
   if (!slug) {
-    fail('Usage: kumiko-gen <slug> [--size 800] [--zoom 1] [--fg "#1c1917"] [--bg "#d6d3d1"] [--finalize] [--out path] [--out-dir dir]');
+    fail('Usage: kumiko-gen <slug> [--size 800] [--zoom 1] [--fg "#1c1917"] [--bg "#d6d3d1"] [--color-scheme random] [--finalize] [--out path] [--out-dir dir]');
   }
 
   return { slug, options, outPath, outDir };

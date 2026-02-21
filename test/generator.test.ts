@@ -4,6 +4,7 @@ import type { KumikoResult } from '../src/generator.js';
 import { hashString } from '../src/hash.js';
 import { createRandom } from '../src/seeded-random.js';
 import { patternNames } from '../src/patterns/index.js';
+import { COLOR_SCHEMES, colorSchemesByKey } from '../src/color-schemes.js';
 
 describe('hashString', () => {
   it('returns a number', () => {
@@ -264,5 +265,139 @@ describe('generateKumikoDetailed with per-layer overrides', () => {
     if (baseline.layers.length > 1) {
       expect(result.layers[1].fg).toBe('#ff00ff');
     }
+  });
+});
+
+describe('generateKumikoDetailed with colorScheme', () => {
+  it('named scheme changes layer colors', () => {
+    const slug = 'scheme-named-test';
+    const baseline = generateKumikoDetailed(slug);
+    const result = generateKumikoDetailed(slug, { colorScheme: 'dracula' });
+
+    // Colors should differ from default scheme
+    const baselineColors = baseline.layers.map((l) => l.fg);
+    const schemeColors = result.layers.map((l) => l.fg);
+    expect(schemeColors).not.toEqual(baselineColors);
+
+    // Pattern structure should remain the same
+    expect(result.layers.length).toBe(baseline.layers.length);
+    for (let i = 0; i < baseline.layers.length; i++) {
+      expect(result.layers[i].patternIndex).toBe(baseline.layers[i].patternIndex);
+      expect(result.layers[i].patternName).toBe(baseline.layers[i].patternName);
+    }
+  });
+
+  it('named scheme uses colors from the scheme palette', () => {
+    const slug = 'scheme-colors-test';
+    const dracula = colorSchemesByKey.get('dracula')!;
+    const result = generateKumikoDetailed(slug, { colorScheme: 'dracula' });
+
+    const fgColors = dracula.palette.slice(1);
+    for (const layer of result.layers) {
+      expect(fgColors).toContain(layer.fg);
+    }
+  });
+
+  it('named scheme sets background from palette', () => {
+    const slug = 'scheme-bg-test';
+    const dracula = colorSchemesByKey.get('dracula')!;
+    const result = generateKumikoDetailed(slug, { colorScheme: 'dracula' });
+
+    expect(result.svg).toContain(`fill="${dracula.palette[0]}"`);
+  });
+
+  it('named scheme returns colorSchemeName', () => {
+    const result = generateKumikoDetailed('name-test', { colorScheme: 'nord' });
+    expect(result.colorSchemeName).toBe('Nord');
+  });
+
+  it('no colorScheme produces identical output (backward compat)', () => {
+    const slug = 'backward-compat-scheme';
+    const before = generateKumikoDetailed(slug);
+    const after = generateKumikoDetailed(slug, {});
+    expect(before.svg).toBe(after.svg);
+    expect(before.layers).toEqual(after.layers);
+    expect(after.colorSchemeName).toBeUndefined();
+  });
+
+  it('"random" is deterministic per slug', () => {
+    const slug = 'random-deterministic';
+    const result1 = generateKumikoDetailed(slug, { colorScheme: 'random' });
+    const result2 = generateKumikoDetailed(slug, { colorScheme: 'random' });
+    expect(result1.svg).toBe(result2.svg);
+    expect(result1.colorSchemeName).toBe(result2.colorSchemeName);
+  });
+
+  it('"random" varies across different slugs', () => {
+    // Try multiple slug pairs to find at least one that produces different schemes
+    const slugPairs = [
+      ['random-slug-a', 'random-slug-b'],
+      ['random-slug-c', 'random-slug-d'],
+      ['random-slug-e', 'random-slug-f'],
+    ];
+    let foundDifference = false;
+    for (const [slugA, slugB] of slugPairs) {
+      const resultA = generateKumikoDetailed(slugA, { colorScheme: 'random' });
+      const resultB = generateKumikoDetailed(slugB, { colorScheme: 'random' });
+      if (resultA.colorSchemeName !== resultB.colorSchemeName) {
+        foundDifference = true;
+        break;
+      }
+    }
+    expect(foundDifference).toBe(true);
+  });
+
+  it('unknown scheme name throws', () => {
+    expect(() => {
+      generateKumikoDetailed('error-test', { colorScheme: 'nonexistent-scheme' });
+    }).toThrow('Unknown color scheme: "nonexistent-scheme"');
+  });
+
+  it('case-insensitive lookup works', () => {
+    const slug = 'case-test';
+    const lower = generateKumikoDetailed(slug, { colorScheme: 'dracula' });
+    const upper = generateKumikoDetailed(slug, { colorScheme: 'DRACULA' });
+    const mixed = generateKumikoDetailed(slug, { colorScheme: 'Dracula' });
+    expect(lower.svg).toBe(upper.svg);
+    expect(lower.svg).toBe(mixed.svg);
+  });
+
+  it('options.fg overrides scheme palette', () => {
+    const slug = 'fg-override-scheme';
+    const customColor = '#123456';
+    const result = generateKumikoDetailed(slug, {
+      colorScheme: 'dracula',
+      fg: customColor,
+    });
+    for (const layer of result.layers) {
+      expect(layer.fg).toBe(customColor);
+    }
+  });
+
+  it('options.layers[i].fg overrides scheme palette', () => {
+    const slug = 'layer-fg-override-scheme';
+    const customColor = '#654321';
+    const result = generateKumikoDetailed(slug, {
+      colorScheme: 'dracula',
+      layers: [{ fg: customColor }],
+    });
+    // First layer should use per-layer override
+    expect(result.layers[0].fg).toBe(customColor);
+    // Other layers should use Dracula palette colors
+    const dracula = colorSchemesByKey.get('dracula')!;
+    const fgColors = dracula.palette.slice(1);
+    for (let i = 1; i < result.layers.length; i++) {
+      expect(fgColors).toContain(result.layers[i].fg);
+    }
+  });
+
+  it('options.bg overrides scheme background', () => {
+    const slug = 'bg-override-scheme';
+    const customBg = '#abcdef';
+    const result = generateKumikoDetailed(slug, {
+      colorScheme: 'dracula',
+      bg: customBg,
+    });
+    expect(result.svg).toContain(`fill="${customBg}"`);
   });
 });

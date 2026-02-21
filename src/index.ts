@@ -7,3 +7,5 @@ export { generateGrid } from './grid.js';
 export type { Point, Triangle } from './grid.js';
 export { patternRegistry, patterns, patternNames } from './patterns/index.js';
 export type { PatternFn } from './patterns/index.js';
+export { COLOR_SCHEMES, colorSchemesByKey, getColorSchemeNames } from './color-schemes.js';
+export type { ColorScheme, Palette } from './color-schemes.js';

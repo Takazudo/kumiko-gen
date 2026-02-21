@@ -4,6 +4,8 @@ import { generateGrid } from './grid.js';
 import { patternRegistry } from './patterns/index.js';
 import { finalizeSvg } from './finalize.js';
 import { r } from './patterns/utils.js';
+import { COLOR_SCHEMES, colorSchemesByKey, normalizeSchemeKey } from './color-schemes.js';
+import type { ColorScheme } from './color-schemes.js';
 
 // Per-layer override for foreground color and stroke width
 export interface LayerOverride {
@@ -24,6 +26,7 @@ export interface LayerInfo {
 export interface KumikoResult {
   svg: string;
   layers: LayerInfo[];
+  colorSchemeName?: string;
 }
 
 export interface KumikoOptions {
@@ -36,6 +39,7 @@ export interface KumikoOptions {
   finalize?: boolean;
   layers?: LayerOverride[]; // Per-layer overrides, matched by index
   overflow?: number; // Canvas overflow factor (default 1). Use >1 to generate patterns beyond viewBox edges, ensuring full coverage after rotation/translation.
+  colorScheme?: string; // Color scheme name or "random" for deterministic per-slug selection
 }
 
 const DEFAULTS = {
@@ -65,7 +69,6 @@ const COLOR_SCHEME = {
 export function generateKumikoDetailed(slug: string, options?: KumikoOptions): KumikoResult {
   const size = options?.size ?? DEFAULTS.size;
   const zoom = options?.zoom ?? 1;
-  const bg = options?.bg ?? COLOR_SCHEME.bg;
   const overflow = options?.overflow ?? 1;
 
   // When overflow > 1, generate patterns over a larger canvas so they extend
@@ -74,6 +77,28 @@ export function generateKumikoDetailed(slug: string, options?: KumikoOptions): K
 
   const seed = hashString(slug);
   const rand = createRandom(seed);
+
+  // Resolve active palette — does NOT consume rand()
+  let activeBg = COLOR_SCHEME.bg;
+  let activeFg: string[] = COLOR_SCHEME.fg;
+  let colorSchemeName: string | undefined;
+
+  if (options?.colorScheme) {
+    let scheme: ColorScheme;
+    if (options.colorScheme === 'random') {
+      // Derive index from hash directly (no PRNG consumption)
+      scheme = COLOR_SCHEMES[seed % COLOR_SCHEMES.length];
+    } else {
+      const found = colorSchemesByKey.get(normalizeSchemeKey(options.colorScheme));
+      if (!found) throw new Error(`Unknown color scheme: "${options.colorScheme}"`);
+      scheme = found;
+    }
+    activeBg = scheme.palette[0];
+    activeFg = scheme.palette.slice(1); // 7 fg colors
+    colorSchemeName = scheme.name;
+  }
+
+  const bg = options?.bg ?? activeBg;
 
   // Pick pattern layers (2, 3, or 4 patterns overlaid)
   // 40% two layers, 40% three layers, 20% four layers
@@ -91,7 +116,7 @@ export function generateKumikoDetailed(slug: string, options?: KumikoOptions): K
   // Pick a random foreground color for each layer, respecting per-layer overrides
   // Always consume the random call to keep the PRNG sequence stable
   const layerColors: string[] = layerEntries.map((_, li) => {
-    const randomColor = COLOR_SCHEME.fg[Math.floor(rand() * COLOR_SCHEME.fg.length)];
+    const randomColor = activeFg[Math.floor(rand() * activeFg.length)];
     // Per-layer override takes highest priority
     if (options?.layers?.[li]?.fg) return options.layers[li].fg!;
     // Global fg option takes second priority
@@ -213,7 +238,7 @@ export function generateKumikoDetailed(slug: string, options?: KumikoOptions): K
 
   const svg = options?.finalize ? finalizeSvg(svgString) : svgString;
 
-  return { svg, layers: layersInfo };
+  return { svg, layers: layersInfo, colorSchemeName };
 }
 
 /**
