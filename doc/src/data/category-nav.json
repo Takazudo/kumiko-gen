@@ -1,6 +1,12 @@
 {
   "changelog": {
-    "pages": [],
+    "pages": [
+      {
+        "docId": "changelog/v0.1.1",
+        "title": "v0.1.1",
+        "position": 9899
+      }
+    ],
     "subcategories": []
   },
   "inbox": {
