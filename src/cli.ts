@@ -23,15 +23,14 @@ function requireFloat(flag: string, value: string | undefined): number {
   return n;
 }
 
-function parseArgs(args: string[]): { slug: string; options: KumikoOptions; outPath?: string; outDir?: string } {
-  const slug = args.find((a) => !a.startsWith('--'));
-  if (!slug) {
-    fail('Usage: kumiko-gen <slug> [--size 800] [--zoom 1] [--fg "#1c1917"] [--bg "#d6d3d1"] [--finalize] [--out path] [--out-dir dir]');
-  }
+// Flags that consume the next arg as their value
+const FLAGS_WITH_VALUE = new Set(['--size', '--fg', '--bg', '--zoom', '--stroke-width', '--divisions', '--out', '--out-dir']);
 
+function parseArgs(args: string[]): { slug: string; options: KumikoOptions; outPath?: string; outDir?: string } {
   const options: KumikoOptions = {};
   let outPath: string | undefined;
   let outDir: string | undefined;
+  const positional: string[] = [];
 
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
@@ -70,7 +69,15 @@ function parseArgs(args: string[]): { slug: string; options: KumikoOptions; outP
         outDir = args[++i];
         if (!outDir) fail('--out-dir requires a directory path');
         break;
+      default:
+        positional.push(args[i]);
+        break;
     }
+  }
+
+  const slug = positional[0];
+  if (!slug) {
+    fail('Usage: kumiko-gen <slug> [--size 800] [--zoom 1] [--fg "#1c1917"] [--bg "#d6d3d1"] [--finalize] [--out path] [--out-dir dir]');
   }
 
   return { slug, options, outPath, outDir };
