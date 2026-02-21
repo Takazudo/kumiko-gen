@@ -2,13 +2,13 @@
 set -euo pipefail
 
 echo "=== [1/5] Build kumiko-gen ==="
-pnpm --filter @takazudo/kumiko-gen build
+pnpm build
 
 echo "=== [2/5] Test kumiko-gen ==="
-pnpm --filter @takazudo/kumiko-gen test
+pnpm test
 
 echo "=== [3/5] Build kumiko-gen-viewer ==="
-pnpm --filter kumiko-gen-viewer build
+pnpm viewer:build
 
 echo "=== [4/5] Generate doc data ==="
 (cd doc && pnpm run generate)

@@ -15,7 +15,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "kumiko-gen": path.resolve(__dirname, "../kumiko-gen/src"),
+      "kumiko-gen": path.resolve(__dirname, "../../src"),
     },
   },
 });

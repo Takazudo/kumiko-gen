@@ -1,6 +1,6 @@
 # Reusable build workflow for kumiko-gen monorepo.
 #
-# Builds all packages, runs tests, builds viewer and doc site,
+# Builds the package, runs tests, builds viewer and doc site,
 # and uploads artifacts for downstream deployment jobs.
 
 name: Build
@@ -32,13 +32,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build kumiko-gen package
-        run: pnpm --filter @takazudo/kumiko-gen build
+        run: pnpm build
 
       - name: Test kumiko-gen package
-        run: pnpm --filter @takazudo/kumiko-gen test
+        run: pnpm test
 
       - name: Build kumiko-gen-viewer
-        run: pnpm --filter kumiko-gen-viewer build
+        run: pnpm viewer:build
 
       - name: Install doc dependencies
         run: cd doc && pnpm install --frozen-lockfile --ignore-workspace

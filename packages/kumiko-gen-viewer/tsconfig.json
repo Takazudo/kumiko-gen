@@ -10,8 +10,8 @@
     "jsx": "react-jsx",
     "noEmit": true,
     "paths": {
-      "kumiko-gen": ["../kumiko-gen/src/index.ts"],
-      "kumiko-gen/*": ["../kumiko-gen/src/*"]
+      "kumiko-gen": ["../../src/index.ts"],
+      "kumiko-gen/*": ["../../src/*"]
     }
   },
   "include": ["src/**/*"]
