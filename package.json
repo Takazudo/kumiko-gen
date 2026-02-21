@@ -1,6 +1,6 @@
 {
   "name": "@takazudo/kumiko-gen",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Generate deterministic Japanese kumiko geometric pattern SVGs from text seeds",
   "type": "module",
   "main": "./dist/index.js",
