@@ -21,6 +21,7 @@ const sidebars: SidebarsConfig = {
   ],
   changelogSidebar: [
     'changelog/index',
+    'changelog/v0.2.0',
     'changelog/v0.1.1',
   ],
   inboxSidebar: [
