@@ -23,14 +23,15 @@ function requireFloat(flag: string, value: string | undefined): number {
   return n;
 }
 
-function parseArgs(args: string[]): { slug: string; options: KumikoOptions; outPath?: string } {
+function parseArgs(args: string[]): { slug: string; options: KumikoOptions; outPath?: string; outDir?: string } {
   const slug = args.find((a) => !a.startsWith('--'));
   if (!slug) {
-    fail('Usage: kumiko-gen <slug> [--size 800] [--zoom 1] [--fg "#1c1917"] [--bg "#d6d3d1"] [--finalize] [--out path]');
+    fail('Usage: kumiko-gen <slug> [--size 800] [--zoom 1] [--fg "#1c1917"] [--bg "#d6d3d1"] [--finalize] [--out path] [--out-dir dir]');
   }
 
   const options: KumikoOptions = {};
   let outPath: string | undefined;
+  let outDir: string | undefined;
 
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
@@ -65,19 +66,23 @@ function parseArgs(args: string[]): { slug: string; options: KumikoOptions; outP
         outPath = args[++i];
         if (!outPath) fail('--out requires a path');
         break;
+      case '--out-dir':
+        outDir = args[++i];
+        if (!outDir) fail('--out-dir requires a directory path');
+        break;
     }
   }
 
-  return { slug, options, outPath };
+  return { slug, options, outPath, outDir };
 }
 
 function main() {
   const args = process.argv.slice(2);
-  const { slug, options, outPath } = parseArgs(args);
+  const { slug, options, outPath, outDir } = parseArgs(args);
 
   const svg = generateKumiko(slug, options);
 
-  const outputPath = outPath ?? resolve(process.cwd(), `${slug}.svg`);
+  const outputPath = outPath ?? resolve(outDir ?? process.cwd(), `${slug}.svg`);
 
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, svg, 'utf-8');
