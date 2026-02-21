@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { generateKumikoDetailed } from 'kumiko-gen/generator';
 import type { LayerInfo, LayerOverride } from 'kumiko-gen/generator';
 import { finalizeSvg } from 'kumiko-gen/finalize';
-import { COLOR_SCHEMES } from './color-schemes';
+import { COLOR_SCHEMES } from '../../src/color-schemes.js';
 import './App.css';
 
 const DIVISIONS_OPTIONS = [6, 8, 10] as const;
