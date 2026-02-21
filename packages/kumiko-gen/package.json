@@ -9,10 +9,15 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./svg-to-png": {
+      "types": "./dist/svg-to-png/index.d.ts",
+      "default": "./dist/svg-to-png/index.js"
     }
   },
   "bin": {
-    "kumiko-gen": "./dist/cli.js"
+    "kumiko-gen": "./dist/cli.js",
+    "kumiko-gen-svg-to-png": "./dist/svg-to-png/cli.js"
   },
   "files": ["dist"],
   "scripts": {
@@ -34,6 +39,9 @@
   "homepage": "https://kumiko-gen.netlify.app/pj/kumiko-gen/doc/",
   "engines": {
     "node": ">=18.0.0"
+  },
+  "optionalDependencies": {
+    "sharp": "^0.33.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

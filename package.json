@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "// ── Packages ────────────────────────────────────": "",
-    "build": "pnpm --filter @takazudo/kumiko-gen build && pnpm --filter @takazudo/svg-to-png build",
-    "test": "pnpm --filter @takazudo/kumiko-gen test && pnpm --filter @takazudo/svg-to-png test",
+    "build": "pnpm --filter @takazudo/kumiko-gen build",
+    "test": "pnpm --filter @takazudo/kumiko-gen test",
     "// ── Viewer ──────────────────────────────────────": "",
     "viewer:dev": "pnpm --filter kumiko-gen-viewer dev",
     "viewer:build": "pnpm --filter kumiko-gen-viewer build",

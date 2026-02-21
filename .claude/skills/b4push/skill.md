@@ -16,11 +16,9 @@ Run `pnpm b4push` from the project root. This executes `scripts/run-b4push.sh` w
 
 1. Build kumiko-gen package
 2. Test kumiko-gen package
-3. Build svg-to-png package
-4. Test svg-to-png package
-5. Build kumiko-gen-viewer
-6. Doc data generation - doc-titles.json + category-nav.json
-7. Doc site build - Full Docusaurus production build
+3. Build kumiko-gen-viewer
+4. Doc data generation - doc-titles.json + category-nav.json
+5. Doc site build - Full Docusaurus production build
 
 All steps must pass.
 

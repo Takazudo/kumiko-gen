@@ -13,8 +13,7 @@ Monorepo for kumiko-gen Japanese geometric pattern tools. Published as a scoped 
 
 ## Project Structure
 
-- `packages/kumiko-gen/` - Main CLI tool + library (@takazudo/kumiko-gen)
-- `packages/svg-to-png/` - SVG to PNG converter (internal)
+- `packages/kumiko-gen/` - Main CLI tool + library (@takazudo/kumiko-gen), includes svg-to-png subpath export
 - `packages/kumiko-gen-viewer/` - Interactive React SPA
 - `doc/` - Docusaurus documentation site (standalone, not a workspace)
 - `.env` - Netlify credentials (NETLIFY_AUTH_TOKEN, NETLIFY_SITE_ID) - gitignored
@@ -30,8 +29,6 @@ Monorepo for kumiko-gen Japanese geometric pattern tools. Published as a scoped 
 # Packages
 pnpm --filter @takazudo/kumiko-gen build     # Build kumiko-gen
 pnpm --filter @takazudo/kumiko-gen test      # Test kumiko-gen
-pnpm --filter @takazudo/svg-to-png build     # Build svg-to-png
-pnpm --filter @takazudo/svg-to-png test      # Test svg-to-png
 pnpm --filter kumiko-gen-viewer dev          # Viewer dev server (kumikogen.localhost:1982)
 pnpm --filter kumiko-gen-viewer build        # Build viewer
 
@@ -66,7 +63,6 @@ pnpm doc:typecheck    # TypeScript check
 
 - **Commits**: Start with a scope prefix, then a short description:
   - `[kumiko-gen] ` - kumiko-gen package (packages/kumiko-gen/)
-  - `[svg-to-png] ` - svg-to-png package (packages/svg-to-png/)
   - `[viewer] ` - kumiko-gen-viewer (packages/kumiko-gen-viewer/)
   - `[doc] ` - documentation site (doc/)
   - `[claude] ` - Claude Code related tweaks (.claude/, CLAUDE.md)

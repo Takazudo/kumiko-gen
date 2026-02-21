@@ -26,6 +26,10 @@ importers:
       vitest:
         specifier: ^3.0.0
         version: 3.2.4(@types/node@22.19.11)
+    optionalDependencies:
+      sharp:
+        specifier: ^0.33.0
+        version: 0.33.5
 
   packages/kumiko-gen-viewer:
     dependencies:
@@ -51,25 +55,6 @@ importers:
       vite:
         specifier: ~6.3.0
         version: 6.3.7(@types/node@22.19.11)
-
-  packages/svg-to-png:
-    dependencies:
-      sharp:
-        specifier: ^0.33.0
-        version: 0.33.5
-    devDependencies:
-      '@types/node':
-        specifier: ^22.0.0
-        version: 22.19.11
-      tsup:
-        specifier: ^8.4.0
-        version: 8.5.1(postcss@8.5.6)(typescript@5.9.3)
-      typescript:
-        specifier: ^5.7.0
-        version: 5.9.3
-      vitest:
-        specifier: ^3.0.0
-        version: 3.2.4(@types/node@22.19.11)
 
 packages:
 
@@ -1911,18 +1896,22 @@ snapshots:
   color-convert@2.0.1:
     dependencies:
       color-name: 1.1.4
+    optional: true
 
-  color-name@1.1.4: {}
+  color-name@1.1.4:
+    optional: true
 
   color-string@1.9.1:
     dependencies:
       color-name: 1.1.4
       simple-swizzle: 0.2.4
+    optional: true
 
   color@4.2.3:
     dependencies:
       color-convert: 2.0.1
       color-string: 1.9.1
+    optional: true
 
   commander@4.1.1: {}
 
@@ -1940,7 +1929,8 @@ snapshots:
 
   deep-eql@5.0.2: {}
 
-  detect-libc@2.1.2: {}
+  detect-libc@2.1.2:
+    optional: true
 
   electron-to-chromium@1.5.286: {}
 
@@ -2027,7 +2017,8 @@ snapshots:
 
   gensync@1.0.0-beta.2: {}
 
-  is-arrayish@0.3.4: {}
+  is-arrayish@0.3.4:
+    optional: true
 
   joycon@3.1.1: {}
 
@@ -2152,7 +2143,8 @@ snapshots:
 
   semver@6.3.1: {}
 
-  semver@7.7.4: {}
+  semver@7.7.4:
+    optional: true
 
   sharp@0.33.5:
     dependencies:
@@ -2179,12 +2171,14 @@ snapshots:
       '@img/sharp-wasm32': 0.33.5
       '@img/sharp-win32-ia32': 0.33.5
       '@img/sharp-win32-x64': 0.33.5
+    optional: true
 
   siginfo@2.0.0: {}
 
   simple-swizzle@0.2.4:
     dependencies:
       is-arrayish: 0.3.4
+    optional: true
 
   source-map-js@1.2.1: {}
 

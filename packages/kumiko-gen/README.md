@@ -63,6 +63,34 @@ const { svg, layers } = generateKumikoDetailed('hello-world');
 console.log(layers); // [{ index: 0, name: 'asanoha', ... }, ...]
 ```
 
+## SVG to PNG Conversion
+
+The package includes an SVG-to-PNG converter as a subpath export. It uses [sharp](https://sharp.pixelplumbing.com/) (optional dependency) to convert square SVG patterns into center-cropped landscape PNGs, ideal for OG images.
+
+### CLI
+
+```bash
+# Convert SVG to PNG (default: 1200x630)
+kumiko-gen-svg-to-png input.svg --out output.png
+
+# Custom dimensions
+kumiko-gen-svg-to-png input.svg --width 600 --height 315
+```
+
+### API
+
+```javascript
+import { convertSvgToPng, convertSvgFileToPng } from '@takazudo/kumiko-gen/svg-to-png';
+
+// From a Buffer
+const pngBuffer = await convertSvgToPng(svgBuffer, { width: 1200, height: 630 });
+
+// From a file path
+const pngBuffer = await convertSvgFileToPng('pattern.svg');
+```
+
+> **Note:** The `sharp` package is an optional dependency. Install it separately if you need SVG-to-PNG conversion: `npm install sharp`
+
 ## Documentation
 
 For full documentation including pattern gallery, options reference, and API details, visit the [documentation site](https://takazudomodular.com/pj/kumiko-gen/doc/).

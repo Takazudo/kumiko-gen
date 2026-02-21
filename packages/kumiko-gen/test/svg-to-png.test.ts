@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import sharp from 'sharp';
-import { convertSvgToPng } from '../src/converter.js';
+import { convertSvgToPng } from '../src/svg-to-png/converter.js';
 
 // Minimal 800x800 square SVG for testing
 function createTestSvg(size = 800): Buffer {
