@@ -54,7 +54,25 @@ Based on the changes:
 
 If the user passed an argument (`major`, `minor`, or `patch`), use that directly instead of proposing.
 
-Present the proposal to the user and **wait for confirmation before proceeding.**
+Present the proposal to the user:
+
+```
+Proposed bump: {current} -> {new} ({type})
+
+Breaking Changes:
+- description (hash)
+
+Features:
+- description (hash)
+
+Bug Fixes:
+- description (hash)
+
+Other Changes:
+- description (hash)
+```
+
+Only show sections that have entries. **Wait for user confirmation before proceeding.**
 
 ## Create changelog doc
 
@@ -89,10 +107,29 @@ Released: {YYYY-MM-DD}
 Rules:
 
 - Only include sections that have entries
-- `sidebar_position` = `10000 - (MAJOR * 1000 + MINOR * 100 + PATCH)` -- newer versions get lower numbers and appear first
+- `sidebar_position` = `10000 - (MAJOR * 1000 + MINOR * 100 + PATCH)` -- newer versions get lower numbers and appear first in the sidebar
 - Use today's date for the release date
+- Each entry should be the commit subject with the short hash in parentheses
+
+## Update sidebars.ts
+
+In `doc/sidebars.ts`, add the new changelog doc to `changelogSidebar`. Insert it after `'changelog/index'` so entries are listed in the array. Keep entries sorted with newer versions first (lower sidebar_position = listed first in the array).
+
+For example, after adding v0.2.0:
+
+```ts
+changelogSidebar: ['changelog/index', 'changelog/v0.2.0', 'changelog/v0.1.1'],
+```
+
+After adding v0.3.0:
+
+```ts
+changelogSidebar: ['changelog/index', 'changelog/v0.3.0', 'changelog/v0.2.0', 'changelog/v0.1.1'],
+```
 
 ## Regenerate category nav
+
+Run the category nav generation script so the changelog index page picks up the new entry:
 
 ```bash
 cd doc && node scripts/generate-category-nav.js
@@ -101,32 +138,40 @@ cd doc && node scripts/generate-category-nav.js
 ## Commit changelog
 
 ```bash
-git add doc/docs/changelog/v{VERSION}.mdx doc/src/data/category-nav.json
+git add doc/docs/changelog/v{VERSION}.mdx doc/sidebars.ts doc/src/data/category-nav.json
 git commit -m "docs: Add changelog for v{VERSION}"
 ```
 
 ## Bump version in package.json
 
-Update the `version` field in `packages/kumiko-gen/package.json` to the new version.
+Update the `version` field in `package.json` (root) to the new version (without the `v` prefix).
 
 ```bash
-git add packages/kumiko-gen/package.json
+git add package.json
 git commit -m "chore: Bump version to v{VERSION}"
 ```
 
 ## Build and test
 
+Run the full build and test suite to make sure everything is good:
+
 ```bash
-pnpm --filter @takazudo/kumiko-gen build && pnpm --filter @takazudo/kumiko-gen test
+pnpm build && pnpm test
 ```
 
+If anything fails, stop and tell the user. Do not proceed with tagging or publishing.
+
 ## Push and wait for CI
+
+Push the commits first (without the tag) and wait for CI to pass:
 
 ```bash
 git push
 ```
 
-Check CI status. **Do not tag or publish until CI is green.**
+Then check CI status with `gh run list --branch main --limit 2`. Poll every 30 seconds until CI shows `completed success`. If CI fails, fix the issue, commit, and push again before proceeding.
+
+**Do not tag or publish until CI is green.**
 
 ## Tag and push tag
 
@@ -141,4 +186,10 @@ git push --tags
 
 **Ask the user for confirmation before publishing.**
 
-Tell the user to run `npm publish` manually (requires 2FA).
+The user will run `npm publish` manually (it requires browser-based 2FA). Tell the user to run:
+
+```bash
+npm publish
+```
+
+After publishing, verify the package page: `https://www.npmjs.com/package/@takazudo/kumiko-gen`

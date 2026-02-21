@@ -1,5 +1,6 @@
 {
   "changelog/index": "Changelog",
+  "changelog/v0.1.1": "v0.1.1",
   "inbox/index": "INBOX",
   "inbox/sample-note": "Sample Note",
   "kumiko-gen-viewer/index": "kumiko-gen-viewer",
