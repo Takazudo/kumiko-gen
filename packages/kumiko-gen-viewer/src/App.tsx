@@ -38,6 +38,30 @@ function mapLayerColor(currentColor: string, newPalette: string[], layerIndex: n
   return colorIdx >= 1 ? newPalette[colorIdx] : lineColors[layerIndex % lineColors.length];
 }
 
+interface RandomState {
+  params: GlobalParams;
+  schemeIndex: number;
+  overrides: LayerOverride[];
+}
+
+function generateRandomState(): RandomState {
+  const schemeIndex = Math.floor(Math.random() * COLOR_SCHEMES.length);
+  const palette = COLOR_SCHEMES[schemeIndex].palette;
+  return {
+    params: {
+      slug: randomSlug(),
+      divisions: DIVISIONS_OPTIONS[Math.floor(Math.random() * DIVISIONS_OPTIONS.length)],
+      zoom: Math.round((1 + Math.random() * 9) * 10) / 10,
+      bg: palette[0],
+    },
+    schemeIndex,
+    overrides: palette.slice(1).map((color) => ({ fg: color })),
+  };
+}
+
+// Random initial state (computed once at module load)
+const INITIAL_STATE = generateRandomState();
+
 // Preview size for the output SVG dimensions
 const PREVIEW_SIZE = 1200;
 // Overflow generates patterns over a larger canvas to ensure full coverage
@@ -56,15 +80,11 @@ function generate(params: GlobalParams, overrides: LayerOverride[]) {
 }
 
 export function App() {
-  const [params, setParams] = useState<GlobalParams>({
-    slug: 'hello-world',
-    divisions: 8,
-    zoom: 1,
-    bg: '#2d2d2d',
-  });
-  const [layerOverrides, setLayerOverrides] = useState<LayerOverride[]>([]);
+  const [params, setParams] = useState<GlobalParams>(INITIAL_STATE.params);
+  const [layerOverrides, setLayerOverrides] = useState<LayerOverride[]>(INITIAL_STATE.overrides);
   const [layerInfos, setLayerInfos] = useState<LayerInfo[]>([]);
-  const [colorSchemeIndex, setColorSchemeIndex] = useState(0);
+  const [colorSchemeIndex, setColorSchemeIndex] = useState(INITIAL_STATE.schemeIndex);
+  const [showDetails, setShowDetails] = useState(false);
 
   // Derive current palette from selected color scheme
   const currentPalette = COLOR_SCHEMES[colorSchemeIndex].palette;
@@ -94,6 +114,7 @@ export function App() {
   useEffect(() => {
     const result = generate(params, layerOverrides);
     setLayerInfos(result.layers);
+    setLayerOverrides((prev) => prev.slice(0, result.layers.length));
     const url = svgToDataUrl(result.svg);
     if (imgARef.current) {
       imgARef.current.src = url;
@@ -160,23 +181,11 @@ export function App() {
   );
 
   const randomize = useCallback(() => {
-    const randomSchemeIndex = Math.floor(Math.random() * COLOR_SCHEMES.length);
-    const newPalette = COLOR_SCHEMES[randomSchemeIndex].palette;
-    const lineColors = newPalette.slice(1);
-    const p: GlobalParams = {
-      slug: randomSlug(),
-      divisions: DIVISIONS_OPTIONS[Math.floor(Math.random() * DIVISIONS_OPTIONS.length)],
-      zoom: Math.round((1 + Math.random() * 9) * 10) / 10,
-      bg: newPalette[0],
-    };
-    // Pre-assign palette colors for up to 4 layers (max layer count).
-    // The generator ignores extra overrides beyond the actual layer count.
-    const newOverrides = lineColors.map((color) => ({ fg: color }));
-    setColorSchemeIndex(randomSchemeIndex);
+    const { params: p, schemeIndex, overrides } = generateRandomState();
+    setColorSchemeIndex(schemeIndex);
     setParams(p);
-    // Single generation with color overrides already applied
-    const result = generate(p, newOverrides);
-    setLayerOverrides(newOverrides.slice(0, result.layers.length));
+    const result = generate(p, overrides);
+    setLayerOverrides(overrides.slice(0, result.layers.length));
     setLayerInfos(result.layers);
     crossfade(result.svg);
   }, [crossfade]);
@@ -205,13 +214,27 @@ export function App() {
 
       {/* Logo link */}
       <a
-        className="site-link"
+        className="floating-link site-link"
         href="https://takazudomodular.com/"
         target="_blank"
         rel="noopener noreferrer"
       >
         <img src={`${import.meta.env.BASE_URL}takazudo.svg`} alt="Takazudo Modular" className="site-logo" />
         <span>Takazudo Modular</span>
+      </a>
+
+      {/* Doc link */}
+      <a
+        className="floating-link doc-link"
+        href="https://takazudomodular.com/pj/kumiko-gen/doc/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg>
+        <span>Doc</span>
       </a>
 
       {/* Controls */}
@@ -233,143 +256,155 @@ export function App() {
           </div>
         </div>
 
-        <div className="control-group">
-          <label>Divisions</label>
-          <div className="radio-group">
-            {DIVISIONS_OPTIONS.map((d) => (
-              <button
-                key={d}
-                className={params.divisions === d ? 'active' : ''}
-                aria-pressed={params.divisions === d}
-                onClick={() => updateGlobal({ divisions: d })}
-              >
-                {d}
-              </button>
-            ))}
-          </div>
-        </div>
+        <button
+          className="btn-toggle-details"
+          onClick={() => setShowDetails((prev) => !prev)}
+          aria-expanded={showDetails}
+        >
+          Details {showDetails ? '\u25B2' : '\u25BC'}
+        </button>
 
-        <div className="control-group">
-          <label htmlFor="zoom-input">Zoom</label>
-          <div className="range-row">
-            <input
-              id="zoom-input"
-              type="range"
-              min="1"
-              max="10"
-              step="0.1"
-              value={params.zoom}
-              onChange={(e) => updateGlobal({ zoom: parseFloat(e.target.value) })}
-            />
-            <span className="range-value">{params.zoom.toFixed(1)}</span>
-          </div>
-        </div>
-
-        <div className="control-group">
-          <label htmlFor="bg-color-input">Background</label>
-          <div className="color-input-row">
-            <input
-              id="bg-color-input"
-              type="color"
-              value={params.bg}
-              onChange={(e) => updateGlobal({ bg: e.target.value })}
-            />
-            <span>{params.bg}</span>
-          </div>
-        </div>
-
-        {/* Color scheme selector */}
-        <div className="control-group">
-          <label htmlFor="scheme-select">Color Scheme</label>
-          <select
-            id="scheme-select"
-            className="scheme-select"
-            value={colorSchemeIndex}
-            onChange={(e) => handleColorSchemeChange(Number(e.target.value))}
-          >
-            {COLOR_SCHEMES.map((scheme, i) => (
-              <option key={scheme.name} value={i}>
-                {scheme.name}
-              </option>
-            ))}
-          </select>
-          <div className="scheme-preview" aria-hidden="true">
-            {currentPalette.map((color, i) => (
-              <span
-                key={i}
-                className="scheme-dot"
-                style={{ background: color }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Per-layer controls */}
-        <div className="layers-section">
-          <label className="section-label">Layers ({layerInfos.length})</label>
-          {layerInfos.map((layer, i) => {
-            const override = layerOverrides[i] ?? {};
-            const currentFg = override.fg ?? layer.fg;
-            const currentSw = override.strokeWidth ?? layer.strokeWidth;
-            return (
-              <div key={i} className="layer-card">
-                <div className="layer-header">
-                  <span
-                    className="layer-color-dot"
-                    style={{ background: currentFg }}
-                  />
-                  <span className="layer-name">{layer.patternName}</span>
-                  <span className="layer-meta">
-                    x{layer.overlaps}
-                  </span>
-                </div>
-                <div className="layer-controls">
-                  <div className="layer-color-row">
-                    <div className="color-palette compact">
-                      {currentPalette.slice(1).map((color) => (
-                        <button
-                          key={color}
-                          className={`color-swatch small ${currentFg === color ? 'active' : ''}`}
-                          style={{ background: color }}
-                          onClick={() => updateLayerOverride(i, { fg: color })}
-                          aria-label={`Set layer color to ${color}`}
-                        />
-                      ))}
-                    </div>
-                    <input
-                      type="color"
-                      value={currentFg}
-                      onChange={(e) =>
-                        updateLayerOverride(i, { fg: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="range-row">
-                    <input
-                      type="range"
-                      min="0.3"
-                      max="5"
-                      step="0.1"
-                      value={currentSw}
-                      onChange={(e) =>
-                        updateLayerOverride(i, {
-                          strokeWidth: parseFloat(e.target.value),
-                        })
-                      }
-                    />
-                    <span className="range-value">{currentSw.toFixed(1)}</span>
-                  </div>
-                </div>
+        {showDetails && (
+          <div className="details-section">
+            <div className="control-group">
+              <label>Divisions</label>
+              <div className="radio-group">
+                {DIVISIONS_OPTIONS.map((d) => (
+                  <button
+                    key={d}
+                    className={params.divisions === d ? 'active' : ''}
+                    aria-pressed={params.divisions === d}
+                    onClick={() => updateGlobal({ divisions: d })}
+                  >
+                    {d}
+                  </button>
+                ))}
               </div>
-            );
-          })}
-        </div>
+            </div>
 
-        <div className="button-row">
-          <button className="btn btn-download" onClick={download}>
-            Download
-          </button>
-        </div>
+            <div className="control-group">
+              <label htmlFor="zoom-input">Zoom</label>
+              <div className="range-row">
+                <input
+                  id="zoom-input"
+                  type="range"
+                  min="1"
+                  max="10"
+                  step="0.1"
+                  value={params.zoom}
+                  onChange={(e) => updateGlobal({ zoom: parseFloat(e.target.value) })}
+                />
+                <span className="range-value">{params.zoom.toFixed(1)}</span>
+              </div>
+            </div>
+
+            <div className="control-group">
+              <label htmlFor="bg-color-input">Background</label>
+              <div className="color-input-row">
+                <input
+                  id="bg-color-input"
+                  type="color"
+                  value={params.bg}
+                  onChange={(e) => updateGlobal({ bg: e.target.value })}
+                />
+                <span>{params.bg}</span>
+              </div>
+            </div>
+
+            {/* Color scheme selector */}
+            <div className="control-group">
+              <label htmlFor="scheme-select">Color Scheme</label>
+              <select
+                id="scheme-select"
+                className="scheme-select"
+                value={colorSchemeIndex}
+                onChange={(e) => handleColorSchemeChange(Number(e.target.value))}
+              >
+                {COLOR_SCHEMES.map((scheme, i) => (
+                  <option key={scheme.name} value={i}>
+                    {scheme.name}
+                  </option>
+                ))}
+              </select>
+              <div className="scheme-preview" aria-hidden="true">
+                {currentPalette.map((color, i) => (
+                  <span
+                    key={i}
+                    className="scheme-dot"
+                    style={{ background: color }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Per-layer controls */}
+            <div className="layers-section">
+              <label className="section-label">Layers ({layerInfos.length})</label>
+              {layerInfos.map((layer, i) => {
+                const override = layerOverrides[i] ?? {};
+                const currentFg = override.fg ?? layer.fg;
+                const currentSw = override.strokeWidth ?? layer.strokeWidth;
+                return (
+                  <div key={i} className="layer-card">
+                    <div className="layer-header">
+                      <span
+                        className="layer-color-dot"
+                        style={{ background: currentFg }}
+                      />
+                      <span className="layer-name">{layer.patternName}</span>
+                      <span className="layer-meta">
+                        x{layer.overlaps}
+                      </span>
+                    </div>
+                    <div className="layer-controls">
+                      <div className="layer-color-row">
+                        <div className="color-palette compact">
+                          {currentPalette.slice(1).map((color) => (
+                            <button
+                              key={color}
+                              className={`color-swatch small ${currentFg === color ? 'active' : ''}`}
+                              style={{ background: color }}
+                              onClick={() => updateLayerOverride(i, { fg: color })}
+                              aria-label={`Set layer color to ${color}`}
+                            />
+                          ))}
+                        </div>
+                        <input
+                          type="color"
+                          value={currentFg}
+                          onChange={(e) =>
+                            updateLayerOverride(i, { fg: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div className="range-row">
+                        <input
+                          type="range"
+                          min="0.3"
+                          max="5"
+                          step="0.1"
+                          value={currentSw}
+                          onChange={(e) =>
+                            updateLayerOverride(i, {
+                              strokeWidth: parseFloat(e.target.value),
+                            })
+                          }
+                        />
+                        <span className="range-value">{currentSw.toFixed(1)}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="button-row">
+              <button className="btn btn-download" onClick={download}>
+                Download
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
