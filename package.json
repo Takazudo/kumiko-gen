@@ -16,8 +16,8 @@
     }
   },
   "bin": {
-    "kumiko-gen": "./dist/cli.js",
-    "kumiko-gen-svg-to-png": "./dist/svg-to-png/cli.js"
+    "kumiko-gen": "dist/cli.js",
+    "kumiko-gen-svg-to-png": "dist/svg-to-png/cli.js"
   },
   "files": ["dist"],
   "scripts": {
