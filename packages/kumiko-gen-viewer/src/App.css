@@ -32,11 +32,9 @@ body {
   height: 100%;
 }
 
-/* Site logo link (top-right) */
-.site-link {
+/* Floating overlay links (shared base) */
+.floating-link {
   position: absolute;
-  top: 16px;
-  right: 16px;
   z-index: 10;
   display: flex;
   align-items: center;
@@ -54,9 +52,15 @@ body {
   transition: background 0.15s, color 0.15s;
 }
 
-.site-link:hover {
+.floating-link:hover {
   background: rgba(0, 0, 0, 0.8);
   color: #fff;
+}
+
+/* Site logo link (top-right) */
+.site-link {
+  top: 16px;
+  right: 16px;
 }
 
 .site-logo {
@@ -436,29 +440,9 @@ body {
 
 /* Doc link (bottom-right) */
 .doc-link {
-  position: absolute;
   bottom: 16px;
   right: 16px;
-  z-index: 10;
-  display: flex;
-  align-items: center;
   gap: 6px;
-  padding: 8px 14px;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(12px);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  text-decoration: none;
-  color: #ccc;
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  transition: background 0.15s, color 0.15s;
-}
-
-.doc-link:hover {
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
 }
 
 .doc-link svg {

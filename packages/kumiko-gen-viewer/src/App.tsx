@@ -38,10 +38,29 @@ function mapLayerColor(currentColor: string, newPalette: string[], layerIndex: n
   return colorIdx >= 1 ? newPalette[colorIdx] : lineColors[layerIndex % lineColors.length];
 }
 
+interface RandomState {
+  params: GlobalParams;
+  schemeIndex: number;
+  overrides: LayerOverride[];
+}
+
+function generateRandomState(): RandomState {
+  const schemeIndex = Math.floor(Math.random() * COLOR_SCHEMES.length);
+  const palette = COLOR_SCHEMES[schemeIndex].palette;
+  return {
+    params: {
+      slug: randomSlug(),
+      divisions: DIVISIONS_OPTIONS[Math.floor(Math.random() * DIVISIONS_OPTIONS.length)],
+      zoom: Math.round((1 + Math.random() * 9) * 10) / 10,
+      bg: palette[0],
+    },
+    schemeIndex,
+    overrides: palette.slice(1).map((color) => ({ fg: color })),
+  };
+}
+
 // Random initial state (computed once at module load)
-const INITIAL_SCHEME_INDEX = Math.floor(Math.random() * COLOR_SCHEMES.length);
-const INITIAL_PALETTE = COLOR_SCHEMES[INITIAL_SCHEME_INDEX].palette;
-const INITIAL_OVERRIDES: LayerOverride[] = INITIAL_PALETTE.slice(1).map((color) => ({ fg: color }));
+const INITIAL_STATE = generateRandomState();
 
 // Preview size for the output SVG dimensions
 const PREVIEW_SIZE = 1200;
@@ -61,15 +80,10 @@ function generate(params: GlobalParams, overrides: LayerOverride[]) {
 }
 
 export function App() {
-  const [params, setParams] = useState<GlobalParams>({
-    slug: randomSlug(),
-    divisions: DIVISIONS_OPTIONS[Math.floor(Math.random() * DIVISIONS_OPTIONS.length)],
-    zoom: Math.round((1 + Math.random() * 9) * 10) / 10,
-    bg: INITIAL_PALETTE[0],
-  });
-  const [layerOverrides, setLayerOverrides] = useState<LayerOverride[]>(INITIAL_OVERRIDES);
+  const [params, setParams] = useState<GlobalParams>(INITIAL_STATE.params);
+  const [layerOverrides, setLayerOverrides] = useState<LayerOverride[]>(INITIAL_STATE.overrides);
   const [layerInfos, setLayerInfos] = useState<LayerInfo[]>([]);
-  const [colorSchemeIndex, setColorSchemeIndex] = useState(INITIAL_SCHEME_INDEX);
+  const [colorSchemeIndex, setColorSchemeIndex] = useState(INITIAL_STATE.schemeIndex);
   const [showDetails, setShowDetails] = useState(false);
 
   // Derive current palette from selected color scheme
@@ -167,23 +181,11 @@ export function App() {
   );
 
   const randomize = useCallback(() => {
-    const randomSchemeIndex = Math.floor(Math.random() * COLOR_SCHEMES.length);
-    const newPalette = COLOR_SCHEMES[randomSchemeIndex].palette;
-    const lineColors = newPalette.slice(1);
-    const p: GlobalParams = {
-      slug: randomSlug(),
-      divisions: DIVISIONS_OPTIONS[Math.floor(Math.random() * DIVISIONS_OPTIONS.length)],
-      zoom: Math.round((1 + Math.random() * 9) * 10) / 10,
-      bg: newPalette[0],
-    };
-    // Pre-assign palette colors for up to 4 layers (max layer count).
-    // The generator ignores extra overrides beyond the actual layer count.
-    const newOverrides = lineColors.map((color) => ({ fg: color }));
-    setColorSchemeIndex(randomSchemeIndex);
+    const { params: p, schemeIndex, overrides } = generateRandomState();
+    setColorSchemeIndex(schemeIndex);
     setParams(p);
-    // Single generation with color overrides already applied
-    const result = generate(p, newOverrides);
-    setLayerOverrides(newOverrides.slice(0, result.layers.length));
+    const result = generate(p, overrides);
+    setLayerOverrides(overrides.slice(0, result.layers.length));
     setLayerInfos(result.layers);
     crossfade(result.svg);
   }, [crossfade]);
@@ -212,7 +214,7 @@ export function App() {
 
       {/* Logo link */}
       <a
-        className="site-link"
+        className="floating-link site-link"
         href="https://takazudomodular.com/"
         target="_blank"
         rel="noopener noreferrer"
@@ -223,12 +225,12 @@ export function App() {
 
       {/* Doc link */}
       <a
-        className="doc-link"
+        className="floating-link doc-link"
         href="https://takazudomodular.com/pj/kumiko-gen/doc/"
         target="_blank"
         rel="noopener noreferrer"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
           <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
         </svg>
@@ -256,7 +258,8 @@ export function App() {
 
         <button
           className="btn-toggle-details"
-          onClick={() => setShowDetails(!showDetails)}
+          onClick={() => setShowDetails((prev) => !prev)}
+          aria-expanded={showDetails}
         >
           Details {showDetails ? '\u25B2' : '\u25BC'}
         </button>
@@ -394,14 +397,14 @@ export function App() {
                 );
               })}
             </div>
+
+            <div className="button-row">
+              <button className="btn btn-download" onClick={download}>
+                Download
+              </button>
+            </div>
           </div>
         )}
-
-        <div className="button-row">
-          <button className="btn btn-download" onClick={download}>
-            Download
-          </button>
-        </div>
       </div>
     </div>
   );
